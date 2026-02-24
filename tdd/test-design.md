@@ -211,6 +211,26 @@ describe '#docker_compose_project_name' do
 end
 ```
 
+## Don't Use have_current_path
+
+`have_current_path` is the wrong level of abstraction — it's too tightly coupled to the implementation. Instead, assert on what the user sees on the page.
+
+Bad:
+```ruby
+it "redirects to the repositories page" do
+  visit root_path
+  expect(page).to have_current_path(repositories_path)
+end
+```
+
+Good:
+```ruby
+it "redirects to the repositories page" do
+  visit root_path
+  expect(page).to have_content("Repositories")
+end
+```
+
 ## Miscellaneous
 
 Never use `instance_variable_set`. In cases where it seems like
