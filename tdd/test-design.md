@@ -231,6 +231,34 @@ it "redirects to the repositories page" do
 end
 ```
 
+## Assert on Observable Outcomes, Not Method Calls
+
+When testing whether something happened (or didn't happen), assert on the observable end result rather than on whether a specific method was called. Mock-based assertions like `expect(x).to have_received(:foo)` test means (was this method called?) rather than ends (did the thing actually happen?).
+
+Bad:
+```ruby
+it "queues the task" do
+  worker_pool = instance_double(WorkerPool, queue_task: nil)
+  allow(WorkerPool).to receive(:new).and_return(worker_pool)
+
+  QueueUnqueuedTasksJob.new.perform
+
+  expect(worker_pool).to have_received(:queue_task).with(task)
+end
+```
+
+Good:
+```ruby
+it "queues the task" do
+  expect { QueueUnqueuedTasksJob.new.perform }
+    .to change { TaskEvent.where(name: "queued").count }.by(1)
+end
+```
+
+The bad version tests that a specific method was called on a specific object — pure implementation. The good version tests the observable outcome: a "queued" event was created. If the implementation changes (different class, different method name), the good test still works as long as the end result is the same.
+
+Stub only what you must (external services like k8s calls), and let the real code run so you can assert on real outcomes.
+
 ## Miscellaneous
 
 Never use `instance_variable_set`. In cases where it seems like
