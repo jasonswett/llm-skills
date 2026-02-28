@@ -18,6 +18,7 @@ Always remember the following design principles:
 - No Speculative Coding
 - No Epicycles (https://www.codewithjason.com/no-epicycles/)
 - Modularity and Loose Coupling
+- Cohesion
 
 Whenever possible, favor a declarative style over an imperative style.
 
