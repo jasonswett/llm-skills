@@ -18,6 +18,7 @@ Always remember the following design principles:
   more abstract than themselves)
 - No Speculative Coding
 - No Epicycles (https://www.codewithjason.com/no-epicycles/)
+- No Broken Windows
 - Modularity and Loose Coupling
 - Cohesion
 
