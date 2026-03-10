@@ -259,6 +259,35 @@ The bad version tests that a specific method was called on a specific object —
 
 Stub only what you must (external services like k8s calls), and let the real code run so you can assert on real outcomes.
 
+## Test Ends, Not Means
+
+When testing performance optimizations like caching, don't assert on the caching mechanism (an implementation detail). Assert on the observable difference: fewer database queries.
+
+Bad:
+```ruby
+it "caches the result" do
+  test_suite_run.duration
+  expect(Rails.cache.read("test_suite_run/#{test_suite_run.id}/duration")).not_to be_nil
+end
+```
+
+Good:
+```ruby
+it "does not query the database on subsequent calls" do
+  test_suite_run.duration
+
+  query_count = 0
+  callback = ->(*) { query_count += 1 }
+  ActiveSupport::Notifications.subscribe("sql.active_record", callback)
+  test_suite_run.duration
+  ActiveSupport::Notifications.unsubscribe(callback)
+
+  expect(query_count).to eq(0)
+end
+```
+
+The bad version is coupled to the caching mechanism (`Rails.cache`). If you switch to memoization, a database column, or a different cache store, the test breaks even though the behavior is the same. The good version tests the essential outcome: no redundant database queries.
+
 ## Miscellaneous
 
 Never use `instance_variable_set`. In cases where it seems like
