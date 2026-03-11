@@ -205,3 +205,23 @@ def self.generate(github_installation_id)
   end
 end
 ```
+
+## No Premature Optimization
+
+Don't assign a contrivantly-named temp var just to avoid calling a method
+multiple times.
+
+Bad:
+```ruby
+to_dispatch = dispatchable_test_suite_runs(cluster: cluster)
+to_dispatch.each do
+  ...
+end
+```
+
+Good:
+```ruby
+dispatchable_test_suite_runs(cluster: cluster).each do
+  ...
+end
+```
