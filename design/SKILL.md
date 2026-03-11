@@ -13,16 +13,22 @@ When invoked, unless otherwise directed, follow the following steps:
 5. If not, suggest more fixes, and if so, restart from #1
 
 Always remember the following design principles:
+- No Hacks, No Workarounds
+- Don't Be Stupid, Lazy or Dishonest
 - Don't Repeat Yourself (DRY)
 - Dependency Inversion (all entities should only depend on entities equally or
   more abstract than themselves)
-- No Speculative Coding
 - No Epicycles (https://www.codewithjason.com/no-epicycles/)
 - No Broken Windows
 - Modularity and Loose Coupling
 - Cohesion
 
 Whenever possible, favor a declarative style over an imperative style.
+
+## No Speculative Coding
+
+Don't write application code which is not strictly needed in order to satisfy
+an existing test.
 
 ## Avoid Abbreviation
 
