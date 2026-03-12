@@ -295,6 +295,55 @@ end
 
 The bad version is coupled to the caching mechanism (`Rails.cache`). If you switch to memoization, a database column, or a different cache store, the test breaks even though the behavior is the same. The good version tests the essential outcome: no redundant database queries.
 
+## Maintain an Appropriately High Level of Abstraction
+
+Bad:
+```ruby
+context "when called twice" do
+  it "queries the database only once" do
+    dispatcher = TestSuiteExecution::TestSuiteRunDispatcher.new(cluster_cpu_headroom_millicores: 72000)
+
+    query_count = 0
+    callback = lambda { |*, _| query_count += 1 }
+    ActiveSupport::Notifications.subscribed(callback, "sql.active_record") do
+      dispatcher.test_suite_runs_with_undispatched_tasks
+      query_count_after_first_call = query_count
+      dispatcher.test_suite_runs_with_undispatched_tasks
+      expect(query_count).to eq(query_count_after_first_call)
+    end
+  end
+end
+```
+
+What's happening in this test? I'm assaulted with a dense block of incidental
+details! The following is much clearer. It hides incidental details and shows
+me the essence of the test.
+
+Good:
+```ruby
+context "when called twice" do                                                                                                               
+  it "queries the database only once" do                                                                                                     
+    dispatcher = TestSuiteExecution::TestSuiteRunDispatcher.new(cluster_cpu_headroom_millicores: 72000)                                      
+                                                                                                                                             
+    first_call_count = count_queries { dispatcher.test_suite_runs_with_undispatched_tasks }                                                  
+    second_call_count = count_queries { dispatcher.test_suite_runs_with_undispatched_tasks }                                                 
+                                                                                                                                               
+    expect(second_call_count).to eq(0)                                                                                                       
+  end                                                                                                                                        
+                                                                                                                                               
+  def count_queries(&block)                                                                                                                  
+    count = 0                                                                                                                                
+    callback = lambda { |*, _| count += 1 }                                                                                                  
+    ActiveSupport::Notifications.subscribed(callback, "sql.active_record", &block)                                                           
+    count                                                                                                                                    
+  end                                                                                                                                        
+end
+```
+
+Note carefully that the helper method `count_queries` appears *after* the test,
+since the helper itself is an incidental detail, not part of the essential
+meaning of the test.
+
 ## Don't Use Hacks to Test Private Methods
 
 Never use `#send` or `#public_send` to test private methods. If you feel
