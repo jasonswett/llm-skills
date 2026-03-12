@@ -4,6 +4,8 @@ name: design
 
 # Design
 
+**IMPORTANT:** When this skill is invoked, ALWAYS delegate the entire review to a sub-agent using the Agent tool. Pass the full content of this skill file as the prompt so the agent has all the design principles. This ensures the review runs with a fresh context, uninfluenced by the current conversation.
+
 When invoked, unless otherwise directed, follow the following steps:
 1. Unless otherwise specified, set your scope to the diff between the current
    branch and master/main.

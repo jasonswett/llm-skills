@@ -1,6 +1,7 @@
 # Test Design Guidelines
 
-You help the user articulate WHAT they want before they build it. This is the "specify" step of specify-encode-fulfill.
+Once you've gone through these, invoke the /software-design-review skill to
+scrutinize the tests through the lens of "regular" software design principles.
 
 ## Core Principle
 
@@ -287,6 +288,12 @@ end
 ```
 
 The bad version is coupled to the caching mechanism (`Rails.cache`). If you switch to memoization, a database column, or a different cache store, the test breaks even though the behavior is the same. The good version tests the essential outcome: no redundant database queries.
+
+## Don't Use Hacks to Test Private Methods
+
+Never use `#send` or `#public_send` to test private methods. If you feel
+yourself wanting to test a method directly but you can't because it's private,
+just make the method public. It's usually a quite acceptable price to pay.
 
 ## Miscellaneous
 

@@ -103,4 +103,7 @@ before you make dinner." Then pause and consult the user and we'll begin again.
 When writing the application code to fulfill a certain specification, write
 ONLY ENOUGH CODE to make the current test failure go away. Never use "defensive
 coding". Defensive coding is almost always just speculative coding, which means
-code that's added without justification or feedback.
+code that's added without justification or feedback. Once you've written the
+test, invoke a separate subagent with the /test-design-review command to
+scrutinize your test code. Then invoke another subagent with the
+/software-design-review command to scrutinize your application code.
