@@ -7,6 +7,8 @@ description: Review tests for design quality using test design guidelines.
 
 When invoked, review the specified tests (or the diff if none specified) against the guidelines in this document.
 
+Important: use a SEPARATE AGENT which does not share your context.
+
 For each violation found, show the offending code and suggest a fix. Group by guideline.
 
 ## Core Principle
@@ -349,6 +351,144 @@ meaning of the test.
 Never use `#send` or `#public_send` to test private methods. If you feel
 yourself wanting to test a method directly but you can't because it's private,
 just make the method public. It's usually a quite acceptable price to pay.
+
+## Don't Tightly Couple Tests to Implementation Details
+
+Bad:
+
+```ruby
+context "when a test suite run finishes" do
+  it "shows the finished status in the sidebar" do
+    visit repository_test_suite_run_path(repository, test_suite_run)
+
+    within ".test-suite-run-list" do
+      expect(page).to have_content("Running")
+    end
+
+    # The following line is the bad part
+    task.update!(json_output: { "summary" => { "failure_count" => 0 } }.to_json)
+
+    http_request(
+      api_authorization_headers: worker_agents_api_authorization_headers(task),
+      path: api_v1_worker_agents_task_task_finished_events_path(task_id: task.id)
+    )
+
+    within ".test-suite-run-list" do
+      expect(page).to have_content("Passed", wait: 3)
+    end
+  end
+end
+```
+
+Good:
+
+```ruby
+context "when a test suite run finishes" do
+  it "shows the finished status in the sidebar" do
+    visit repository_test_suite_run_path(repository, test_suite_run)
+
+    within ".test-suite-run-list" do
+      expect(page).to have_content("Running")
+    end
+
+    task.update!(exit_code: 0)
+
+    http_request(
+      api_authorization_headers: worker_agents_api_authorization_headers(task),
+      path: api_v1_worker_agents_task_task_finished_events_path(task_id: task.id)
+    )
+
+    within ".test-suite-run-list" do
+      expect(page).to have_content("Passed", wait: 3)
+    end
+  end
+end
+```
+
+## Use an Arrange, Act, Assert Format
+
+Bad:
+```ruby
+require "rails_helper"
+
+describe "Sidebar test suite run status", type: :system do
+  let!(:task) { create(:task, :dispatched) }
+  let!(:test_suite_run) { task.test_suite_run }
+  let!(:repository) { test_suite_run.repository }
+
+  before do
+    test_suite_run.cache_status
+    allow_any_instance_of(User).to receive(:can_access_repository?).and_return(true)
+    login_as(repository.user)
+  end
+
+  context "when a test suite run finishes" do
+    it "shows the finished status in the sidebar" do
+      visit repository_test_suite_run_path(repository, test_suite_run)
+
+      within ".test-suite-run-list" do
+        expect(page).to have_content("Running")
+      end
+
+      task.update!(exit_code: 0)
+
+      within ".test-suite-run-list" do
+        expect(page).to have_content("Passed")
+      end
+    end
+  end
+end
+```
+
+Good:
+```ruby
+require "rails_helper"
+
+describe "Sidebar test suite run status", type: :system do
+  # Beginning of Arrange
+  let!(:task) { create(:task, :dispatched) }
+  let!(:test_suite_run) { task.test_suite_run }
+  let!(:repository) { test_suite_run.repository }
+
+  before do
+    test_suite_run.cache_status
+    allow_any_instance_of(User).to receive(:can_access_repository?).and_return(true)
+    login_as(repository.user)
+  end
+  # End of Arrange
+
+  context "when a test suite run finishes" do
+    before do
+      # Beginning of Act (make the test suite run finish)
+      visit repository_test_suite_run_path(repository, test_suite_run)
+
+      within ".test-suite-run-list" do
+        expect(page).to have_content("Running")
+      end
+
+      task.update!(exit_code: 0)
+      # End of Act
+    end
+
+    it "shows the finished status in the sidebar" do
+      # Beginning of Assert
+      within ".test-suite-run-list" do
+        expect(page).to have_content("Passed")
+      end
+      # End of Assert
+    end
+  end
+end
+```
+
+## No Speculative Coding
+
+```ruby
+expect(page).to have_content("Passed", wait: 3)
+```
+
+Is the "wait" really needed, or was it just cargo culted? Scrutinize such
+choices.
 
 ## Miscellaneous
 
