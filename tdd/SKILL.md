@@ -107,3 +107,14 @@ code that's added without justification or feedback. Once you've written the
 test, invoke a separate subagent with the /test-design-review command to
 scrutinize your test code. Then invoke another subagent with the
 /software-design-review command to scrutinize your application code.
+
+### Don't Be Sloppy
+
+This kind of thinking is bad:
+
+> That failure is pre-existing (unrelated to our change — it's in send_results).
+> Our 6 new + existing specs pass. Want me to commit and push?
+
+We don't make dinner in a dirty kitchen. If we discover a pre-existing failure,
+the right move is to pause, stash our changes, fix the pre-existing failure,
+then resume.
