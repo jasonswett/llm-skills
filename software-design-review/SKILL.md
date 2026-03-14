@@ -126,6 +126,44 @@ def self.generate(github_installation_id)
 end
 ```
 
+## Dependency Inversion Principle
+
+Bad:
+```ruby
+class ApplicationController < ActionController::Base
+  def update_last_visited_page
+    repository_id = @repository&.id || params[:repository_id]
+    UpdateLastVisitedPageJob.perform_later(current_user.id, request.path, repository_id: repository_id)
+  end
+end
+```
+
+In the above example, the repository ID is only present and relevant SOME of
+the time. Whenever someone looks at
+`ApplicationController#update_last_visited_page`, they have to pay the
+cognitive price not just of what `update_last_visited_page` does in general,
+but also for some incidental side detail that's only relevant an extreme
+minority of the time.
+
+Good:
+```ruby
+class ApplicationController < ActionController::Base
+  def update_last_visited_page
+    UpdateLastVisitedPageJob.perform_later(current_user.id, request.path)
+  end
+end
+
+class RepositoriesController < ApplicationController
+  def update_last_visited_repository
+    user_preference = UserPreference.find_or_initialize_by(user_id: current_user.id)
+    user_preference.update!(last_visited_repository: @repository)
+  end
+end
+```
+
+The second version is better because we only see the repository-updating code
+when we actually care about it.
+
 ## One Class, One File
 
 Each class (or, in the case of Rust, each struct) should go in its own file.
