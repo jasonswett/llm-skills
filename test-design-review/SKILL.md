@@ -439,6 +439,23 @@ context "when a test suite run finishes" do
 end
 ```
 
+Bad:
+```ruby
+def unsubscribe_path_from(sent_email)                                                                                       
+  url = sent_email.body[/href="([^"]*notification_email_subscription[^"]*)"/, 1]                                            
+  URI.parse(url).path                                                                                                       
+end
+```
+
+Good:
+```ruby
+def unsubscribe_path_from(sent_email)
+  doc = Nokogiri::HTML(sent_email.body)
+  url = doc.at("a:contains('Stop receiving these emails')")["href"]
+  URI.parse(url).path
+end
+```
+
 ## Use an Arrange, Act, Assert Format
 
 Bad:
