@@ -297,6 +297,40 @@ end
 
 The bad version is coupled to the caching mechanism (`Rails.cache`). If you switch to memoization, a database column, or a different cache store, the test breaks even though the behavior is the same. The good version tests the essential outcome: no redundant database queries.
 
+Bad:
+```ruby
+context "when a notification is sent" do
+  it "includes an unsubscribe link in the email body" do
+    TestSuiteRunResultNotification.send_notifications
+
+    expect(SentEmail.last.body).to include("stop receiving these emails")
+  end
+end
+```
+
+Good:
+```ruby
+describe "unsubscribe from notification emails", type: :request do
+  let!(:test_suite_run) { create(:test_suite_run, cached_status: "Passed") }
+  let!(:repository) { test_suite_run.repository }
+                                                                                                                                             
+  before do
+    allow_any_instance_of(User).to receive(:can_access_repository?).and_return(true)
+    login_as(repository.user)                                        
+    TestSuiteRunResultNotification.send_notifications
+  end                                                                                                                                        
+                                 
+  it "disables notification emails for the repository" do                                                                                    
+    email_body = SentEmail.last.body         
+    unsubscribe_path = email_body[/href="([^"]*unsubscribe[^"]*)"/, 1]
+
+    get unsubscribe_path
+
+    expect(repository.reload.send_test_suite_run_result_emails).to eq(false)
+  end
+end
+```
+
 ## Maintain an Appropriately High Level of Abstraction
 
 Bad:

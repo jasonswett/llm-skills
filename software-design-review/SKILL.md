@@ -27,6 +27,18 @@ Always remember the following design principles:
 
 Whenever possible, favor a declarative style over an imperative style.
 
+## No Hacks, No Workarounds
+
+Bad — parsing a file with grep/cut instead of sourcing it:
+```bash
+NEW_RELIC_API_KEY=$(grep '^NEW_RELIC_API_KEY=' ../../.env | cut -d= -f2)
+```
+
+Good — just source the file:
+```bash
+source ../../.env
+```
+
 ## No Speculative Coding
 
 Don't write application code which is not strictly needed in order to satisfy
