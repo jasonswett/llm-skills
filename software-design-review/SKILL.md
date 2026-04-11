@@ -7,12 +7,15 @@ name: software-design-review
 When invoked, unless otherwise directed, follow the following steps:
 1. Unless otherwise specified, set your scope to the diff between the current
    branch and master/main.
-2. Grab the first principle in this document, announce to the user that you're
+2. Start a running list of principle violations.
+3. Grab the first principle in this document, announce to the user that you're
    looking for violations of it, and, using a sub-agent, look for violations.
-3. For the worst 1-3 offenses of that principle, suggest fixes. DO NOT SKIP ANY
-   PRINCIPLES!
-4. Ask the user whether he would like to move onto other principles
-5. If not, suggest more fixes, and if so, restart from #1
+4. For the worst 1-3 offenses of that principle, add a description of the
+   violation to the running list.
+5. Sort the list from easiest to address to hardest to address.
+6. For each violation, offer a solution to the user and ask whether to apply
+   the solution or to move on. Each solution should be applied on its own
+   branch, in atomic commits. Follow TDD where applicable.
 
 Always remember the following design principles:
 - No Hacks, No Workarounds
