@@ -74,6 +74,16 @@ last_test_suite_run = @repository.test_suite_runs.first
 ```
 
 Bad:
+```ruby
+ledger = PostageSummaryLedger.new
+```
+
+Good:
+```ruby
+postage_summary_ledger = PostageSummaryLedger.new
+```
+
+Bad:
 ```rust
 let mut history = SnapshotHistory::new();
 ```
