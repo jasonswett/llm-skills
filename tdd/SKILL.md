@@ -39,7 +39,7 @@ Before writing tests, follow this loop:
 
 Specifications should take the form: "under scenario A, X happens; under scenario B, Y happens".
 
-For guidance on designing good specifications, see [test-design.md](test-design.md).
+For guidance on designing good specifications, see [test-design.md](../test-design-review/SKILL.md).
 
 ## Translating Specifications into Tests
 
