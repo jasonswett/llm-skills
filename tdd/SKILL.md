@@ -118,3 +118,14 @@ This kind of thinking is bad:
 We don't make dinner in a dirty kitchen. If we discover a pre-existing failure,
 the right move is to pause, stash our changes, fix the pre-existing failure,
 then resume.
+
+### Don't Be Lazy
+
+This is stupid and bad:
+
+> Bundler version mismatch. The task agent uses bundler 2.5.22 but the system has
+> a different version. The tests can't run here. But the changes are
+> straightforward — removed re-tagging and made preload_app_image return the
+> image name.
+
+Don't abandon tests immediately upon encountering the slightest difficulty.

@@ -35,3 +35,8 @@ class Shape < ApplicationRecord
   # contents of model
 end
 ```
+
+Note: `Circle < Shape` is a transitional backwards-compatibility shim, not
+Single Table Inheritance. STI is irrelevant here — `Circle` exists only so
+existing references keep working until they're updated to `Shape`. No `type`
+column is needed on the table.

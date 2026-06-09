@@ -50,6 +50,10 @@ Names that don't communicate intent. Single-letter variables outside tiny blocks
 ### Imperative code that should be declarative
 Code that spells out step-by-step HOW to do something when it could instead declare WHAT it wants. Manual loops building up arrays instead of `map`/`select`/`reject`. Hand-rolled lookup logic instead of `find`/`index_by`. Multi-step conditionals assembling a value instead of a lookup table or pattern match. Declarative code is shorter, harder to get wrong, and communicates intent instead of mechanism.
 
+## Check State
+
+When the user invokes `/refactor check state`, assess whether the current work has gone up a garden path (multiple wrong turns, fixing-the-previous-fix commits, growing scope, repeated reverts). If it has, offer to blow everything away and start over in a different direction.
+
 ## Rules
 
 - One problem per iteration. Don't batch changes.

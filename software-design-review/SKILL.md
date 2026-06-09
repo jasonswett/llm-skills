@@ -4,7 +4,11 @@ name: software-design-review
 
 # Design
 
-When invoked, unless otherwise directed, follow the following steps:
+When invoked, unless otherwise directed, follow the following steps. Steps 1-6
+should be autonomous; step 7 is interactive. You should also support "full
+self-driving" mode where you just apply all fixes to all violations without
+prompting. The user can pass "fsd" to invoke full self-driving mode.
+
 1. Unless otherwise specified, set your scope to the diff between the current
    branch and master/main.
 2. Start a running list of principle violations.
@@ -13,12 +17,12 @@ When invoked, unless otherwise directed, follow the following steps:
 4. For the worst 1-3 offenses of that principle, add a description of the
    violation to the running list.
 5. Sort the list from easiest to address to hardest to address.
-6. For each violation, offer a solution to the user and ask whether to apply
+6. Notify the user that the design review is complete.
+7. For each violation, offer a solution to the user and ask whether to apply
    the solution or to move on. Each solution should be applied on its own
    branch, in atomic commits. Follow TDD where applicable.
 
-Always remember the following design principles:
-- No Hacks, No Workarounds
+Principles:
 - Don't Be Stupid, Lazy or Dishonest
 - Don't Repeat Yourself (DRY)
 - Dependency Inversion (all entities should only depend on entities equally or
@@ -27,8 +31,9 @@ Always remember the following design principles:
 - No Broken Windows
 - Modularity and Loose Coupling
 - Cohesion
+- Favor Declarative Over Imperative
 
-Whenever possible, favor a declarative style over an imperative style.
+More principles:
 
 ## No Hacks, No Workarounds
 
