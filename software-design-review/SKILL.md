@@ -9,6 +9,9 @@ should be autonomous; step 7 is interactive. You should also support "full
 self-driving" mode where you just apply all fixes to all violations without
 prompting. The user can pass "fsd" to invoke full self-driving mode.
 
+Note: all the following steps should be followed, strictly and literally, even
+for trivial-seeming changes.
+
 1. Unless otherwise specified, set your scope to the diff between the current
    branch and master/main. Important note: don't neglect to review test code,
    which is just as important as application code if not more so.
