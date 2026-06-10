@@ -23,102 +23,7 @@ prompting. The user can pass "fsd" to invoke full self-driving mode.
    the solution or to move on. Each solution should be applied on its own
    branch, in atomic commits. Follow TDD where applicable.
 
-Principles:
-- Don't Be Stupid, Lazy or Dishonest
-- Don't Repeat Yourself (DRY)
-- Dependency Inversion (all entities should only depend on entities equally or
-  more abstract than themselves)
-- No Epicycles (https://www.codewithjason.com/no-epicycles/)
-- No Broken Windows
-- Modularity and Loose Coupling
-- Cohesion
-- Favor Declarative Over Imperative
-
-More principles:
-
-## No Hacks, No Workarounds
-
-Bad — parsing a file with grep/cut instead of sourcing it:
-```bash
-NEW_RELIC_API_KEY=$(grep '^NEW_RELIC_API_KEY=' ../../.env | cut -d= -f2)
-```
-
-Good — just source the file:
-```bash
-source ../../.env
-```
-
-## No Speculative Coding
-
-Don't write application code which is not strictly needed in order to satisfy
-an existing test.
-
-## Avoid Abbreviation
-
-Bad:
-```ruby
-usr = User.first
-```
-
-Good:
-```ruby
-user = User.first
-```
-
-Exceptions are abbreviations that are already part of everyone's vocabulary,
-such as SSN or URL.
-
-## Be Strictly Consistent with Naming
-
-Bad:
-```ruby
-last_run = @repository.test_suite_runs.first
-```
-
-Is it a "run" or is it a "test suite run"?
-
-Good:
-```ruby
-last_test_suite_run = @repository.test_suite_runs.first
-```
-
-Bad:
-```ruby
-ledger = PostageSummaryLedger.new
-```
-
-Good:
-```ruby
-postage_summary_ledger = PostageSummaryLedger.new
-```
-
-Bad:
-```rust
-let mut history = SnapshotHistory::new();
-```
-
- Good:
-```rust
-let mut snapshot_history = SnapshotHistory::new();
-```
-
-Bad:
-```javascript
-const list = this.element.querySelector("#test-suite-run-list");
-if (list) {
-  list.addEventListener("mouseenter", () => this.hovering = true);
-  list.addEventListener("mouseleave", () => this.hovering = false);
-}
-```
-
-Good:
-```javascript
-const testSuiteRunList = this.element.querySelector("#test-suite-run-list");
-if (testSuiteRunList) {
-  testSuiteRunList.addEventListener("mouseenter", () => this.hovering = true);
-  testSuiteRunList.addEventListener("mouseleave", () => this.hovering = false);
-}
-```
+# Principles
 
 ## Call Things What They Are
 
@@ -174,6 +79,94 @@ def self.generate(github_installation_id)
   end
 end
 ```
+
+## Be Strictly Consistent with Naming
+
+This principle is closely related to "call things what they are". If we have an
+instance of a `JobRunListQuery`, for example, don't call it `query`. Call it
+`job_run_list_query`, because that's what it is.
+
+Bad:
+```ruby
+last_run = @repository.test_suite_runs.first
+```
+
+Is it a "run" or is it a "test suite run"?
+
+Good:
+```ruby
+last_test_suite_run = @repository.test_suite_runs.first
+```
+
+Bad:
+```ruby
+ledger = PostageSummaryLedger.new
+```
+
+Good:
+```ruby
+postage_summary_ledger = PostageSummaryLedger.new
+```
+
+Bad:
+```rust
+let mut history = SnapshotHistory::new();
+```
+
+ Good:
+```rust
+let mut snapshot_history = SnapshotHistory::new();
+```
+
+Bad:
+```javascript
+const list = this.element.querySelector("#test-suite-run-list");
+if (list) {
+  list.addEventListener("mouseenter", () => this.hovering = true);
+  list.addEventListener("mouseleave", () => this.hovering = false);
+}
+```
+
+Good:
+```javascript
+const testSuiteRunList = this.element.querySelector("#test-suite-run-list");
+if (testSuiteRunList) {
+  testSuiteRunList.addEventListener("mouseenter", () => this.hovering = true);
+  testSuiteRunList.addEventListener("mouseleave", () => this.hovering = false);
+}
+```
+
+## No Hacks, No Workarounds
+
+Bad — parsing a file with grep/cut instead of sourcing it:
+```bash
+NEW_RELIC_API_KEY=$(grep '^NEW_RELIC_API_KEY=' ../../.env | cut -d= -f2)
+```
+
+Good — just source the file:
+```bash
+source ../../.env
+```
+
+## No Speculative Coding
+
+Don't write application code which is not strictly needed in order to satisfy
+an existing test.
+
+## Avoid Abbreviation
+
+Bad:
+```ruby
+usr = User.first
+```
+
+Good:
+```ruby
+user = User.first
+```
+
+Exceptions are abbreviations that are already part of everyone's vocabulary,
+such as SSN or URL.
 
 ## Dependency Inversion Principle
 
