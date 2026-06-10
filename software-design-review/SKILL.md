@@ -10,7 +10,8 @@ self-driving" mode where you just apply all fixes to all violations without
 prompting. The user can pass "fsd" to invoke full self-driving mode.
 
 1. Unless otherwise specified, set your scope to the diff between the current
-   branch and master/main.
+   branch and master/main. Important note: don't neglect to review test code,
+   which is just as important as application code if not more so.
 2. Start a running list of principle violations.
 3. Grab the first principle in this document, announce to the user that you're
    looking for violations of it, and, using a sub-agent, look for violations.
