@@ -247,6 +247,9 @@ make the class they live in lose cohesion. Related code should be grouped
 together. We should put things in the places we're likely to go looking for
 them.
 
+(Note: in Rails, view-related cohesion problems can often be addressed with the
+help of ViewComponents.)
+
 ## One Class, One File
 
 Each class (or, in the case of Rust, each struct) should go in its own file.
