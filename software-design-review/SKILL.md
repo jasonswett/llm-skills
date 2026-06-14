@@ -145,6 +145,14 @@ if (testSuiteRunList) {
 }
 ```
 
+## Avoid Classically Bad Names
+
+My least favorite variable name is "data". It could be anything.
+
+My least favorite method name is "call".
+
+That doesn't mean we should NEVER use these names, just that they're a smell.
+
 ## No Hacks, No Workarounds
 
 Bad — parsing a file with grep/cut instead of sourcing it:
