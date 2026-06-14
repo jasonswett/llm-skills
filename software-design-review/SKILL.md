@@ -238,6 +238,14 @@ export default class extends Controller {
 The concrete deletion behavior should live in its own controller, not in the
 abstract list action controller.
 
+## Cohesion
+
+The kind of smell to look out for: a method added to a very central class (e.g.
+User) which exists only to support some very peripheral feature. Such methods
+make the class they live in lose cohesion. Related code should be grouped
+together. We should put things in the places we're likely to go looking for
+them.
+
 ## One Class, One File
 
 Each class (or, in the case of Rust, each struct) should go in its own file.
