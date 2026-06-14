@@ -18,6 +18,7 @@ for trivial-seeming changes.
 2. Start a running list of principle violations.
 3. Grab the first principle in this document, announce to the user that you're
    looking for violations of it, and, using a sub-agent, look for violations.
+   Do not group principles. Strictly use one agent per principle.
 4. For the worst 1-3 offenses of that principle, add a description of the
    violation to the running list.
 5. Sort the list from easiest to address to hardest to address.
