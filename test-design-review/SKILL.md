@@ -169,7 +169,27 @@ describe "Rerun Failed button", type: :system do
 end
 ```
 
-## Avoid forward reference
+## Don't Write Pointless/Tautological Tests
+
+Bad:
+```ruby
+it "renders a labeled checkbox for each github account" do
+  first_github_account = create(:github_account, account_name: "first-account")
+  second_github_account = create(:github_account, account_name: "second-account")
+
+  get admin_job_runs_path
+
+  document = Nokogiri::HTML(response.body)
+  expect(labeled_checkbox_value(document, "first-account")).to eq(first_github_account.id)
+  expect(labeled_checkbox_value(document, "second-account")).to eq(second_github_account.id)
+end
+```
+
+Tests like this merely answer the question: "Is the code I wrote the code I
+wrote?" Answer: yup. It will never not be. There's no point in writing tests
+like this.
+
+## Avoid Forward Reference
 
 In the below example, `task_id` is referred to before it's "defined".
 
