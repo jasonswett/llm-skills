@@ -22,8 +22,7 @@ for trivial-seeming changes.
    violation to the running list.
 5. Sort the list from worst "offenses" to most minor.
 6. Notify the user that the design review is complete.
-7. For each violation, offer a solution to the user and ask whether to apply
-   the solution or to move on.
+7. Show the list of violations to the user, then apply the fixes.
 
 ## Core Principle
 
