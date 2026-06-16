@@ -564,6 +564,43 @@ describe "Sidebar test suite run status", type: :system do
 end
 ```
 
+Another example:
+
+Worse:
+```ruby
+it "shows only job runs belonging to the selected account" do
+  # Arrange
+  selected_account = create(:github_account)
+  selected_job_run = create(:job_run, repository: create(:repository, github_account: selected_account))
+  other_job_run = create(:job_run, repository: create(:repository, github_account: create(:github_account)))
+
+  # Act
+  get admin_job_runs_path(github_account_ids: [selected_account.id])
+
+  # Assert
+  expect(response.body).to include(selected_job_run.id)
+  expect(response.body).not_to include(other_job_run.id)
+end
+```
+
+Better:
+```ruby
+context "when filtered by github account" do
+  let!(:selected_account) { create(:github_account) }
+  let!(:selected_job_run) { create(:job_run, repository: create(:repository, github_account: selected_account)) }
+  let!(:other_job_run) { create(:job_run, repository: create(:repository, github_account: create(:github_account))) }
+
+  before do
+    get admin_job_runs_path(github_account_ids: [selected_account.id])
+  end
+
+  it "shows only job runs belonging to the selected account" do
+    expect(response.body).to include(selected_job_run.id)
+    expect(response.body).not_to include(other_job_run.id)
+  end
+end
+```
+
 ## No Speculative Coding
 
 ```ruby
