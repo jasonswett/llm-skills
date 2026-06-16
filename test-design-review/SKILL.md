@@ -497,18 +497,16 @@ Bad:
 require "rails_helper"
 
 describe "Sidebar test suite run status", type: :system do
-  let!(:task) { create(:task, :dispatched) }
-  let!(:test_suite_run) { task.test_suite_run }
-  let!(:repository) { test_suite_run.repository }
-
-  before do
-    test_suite_run.cache_status
-    allow_any_instance_of(User).to receive(:can_access_repository?).and_return(true)
-    login_as(repository.user)
-  end
-
   context "when a test suite run finishes" do
     it "shows the finished status in the sidebar" do
+      task = create(:task, :dispatched)
+      test_suite_run = task.test_suite_run
+      repository = test_suite_run.repository
+
+      test_suite_run.cache_status
+      allow_any_instance_of(User).to receive(:can_access_repository?).and_return(true)
+      login_as(repository.user)
+
       visit repository_test_suite_run_path(repository, test_suite_run)
 
       within ".test-suite-run-list" do
