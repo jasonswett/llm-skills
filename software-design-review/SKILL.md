@@ -21,16 +21,13 @@ for trivial-seeming changes.
    Do not group principles. Strictly use one agent per principle.
 4. For the worst 1-3 offenses of that principle, add a description of the
    violation to the running list.
-5. Sort the list from easiest to address to hardest to address.
+5. Sort the list from worst "offenses" to most minor.
 6. Notify the user that the design review is complete.
 7. For each violation, offer a solution to the user and ask whether to apply
    the solution or to move on. Each solution should be applied on its own
    branch, in atomic commits (unless the changes you're reviewing have not been
    committed, in which case branches and commits don't apply). Follow TDD where
    applicable.
-
-When you present the full list, don't sort it from easy to hard. Sort it "worst
-problems first". Cost to fix is a separate consideration.
 
 # Principles
 

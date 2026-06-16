@@ -5,11 +5,25 @@ description: Review tests for design quality using test design guidelines.
 
 # Test Design Review
 
-When invoked, review the specified tests (or the diff if none specified) against the guidelines in this document.
+When invoked, review the specified tests (or the diff if none specified)
+against the guidelines in this document.
 
-Important: use a SEPARATE AGENT which does not share your context.
+Note: all the following steps should be followed, strictly and literally, even
+for trivial-seeming changes.
 
-For each violation found, show the offending code and suggest a fix. Group by guideline.
+1. Unless otherwise specified, set your scope to the diff between the current
+   branch and master/main. Important note: don't neglect to review test code,
+   which is just as important as application code if not more so.
+2. Start a running list of principle violations.
+3. Grab the first principle in this document, announce to the user that you're
+   looking for violations of it, and, using a sub-agent, look for violations.
+   Do not group principles. Strictly use one agent per principle.
+4. For the worst 1-3 offenses of that principle, add a description of the
+   violation to the running list.
+5. Sort the list from worst "offenses" to most minor.
+6. Notify the user that the design review is complete.
+7. For each violation, offer a solution to the user and ask whether to apply
+   the solution or to move on.
 
 ## Core Principle
 
