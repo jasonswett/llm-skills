@@ -255,6 +255,99 @@ them.
 (Note: in Rails, view-related cohesion problems can often be addressed with the
 help of ViewComponents.)
 
+Here's a cohesion example.
+
+Controller:
+```ruby
+module Admin
+  class JobRunsController < ApplicationController
+    def index
+      @github_accounts = GitHubAccount.active_repository_owners_first
+      @limit = 100
+      @all_job_runs = JobRun.joins(:repository).where(repositories: { active: true }).order(created_at: :desc)
+
+      if params[:github_account_ids].present?
+        @all_job_runs = @all_job_runs.where(repositories: { github_account_id: params[:github_account_ids] })
+      end
+
+      @job_runs = @all_job_runs.includes(repository: :github_account).limit(@limit)
+
+      authorize :admin, :index?
+    end
+  end
+end
+```
+
+Model:
+```ruby
+require "octokit"
+
+class GitHubAccount < ApplicationRecord
+  acts_as_paranoid
+  belongs_to :user
+  has_many :repositories, dependent: :destroy
+
+  scope :active_repository_owners_first, lambda {
+    has_active_repository = Repository
+      .where("repositories.github_account_id = github_accounts.id")
+      .active
+      .arel
+      .exists
+
+    order(Arel::Nodes::Descending.new(has_active_repository), :account_name)
+  }
+
+  def uninstall
+    octokit_client.delete_installation(github_installation_id)
+  end
+
+  def octokit_client
+    Octokit::Client.new(bearer_token: GitHubJWTToken.generate)
+  end
+
+  def installation_access_octokit_client
+    Octokit::Client.new(bearer_token: GitHubInstallationAccessToken.token(github_installation_id))
+  end
+end
+```
+
+The `active_repository_owners_first` scope exists solely to support this one
+single highly peripheral admin feature, yet the central and fundamental class
+`GitHubAccount` is being made to foot the bill. Highly inappropriate!
+
+Here's a better version:
+
+```ruby
+module Admin
+  class JobRunsController < ApplicationController
+    def index
+      has_active_repository = Repository
+        .where("repositories.github_account_id = github_accounts.id")
+        .active
+        .arel
+        .exists
+
+      @github_accounts = GitHubAccount.order(Arel::Nodes::Descending.new(has_active_repository), :account_name)
+      @limit = 100
+      @all_job_runs = JobRun.joins(:repository).where(repositories: { active: true }).order(created_at: :desc)
+
+      if params[:github_account_ids].present?
+        @all_job_runs = @all_job_runs.where(repositories: { github_account_id: params[:github_account_ids] })
+      end
+
+      @job_runs = @all_job_runs.includes(repository: :github_account).limit(@limit)
+
+      authorize :admin, :index?
+    end
+  end
+end
+```
+
+The code looks kind of nasty BUT this is "leaf code" - code nothing else
+depends on - and so we can afford for it to be nasty. Having this tightly
+contained, small mess is MUCH better than making a central model foot the bill
+for a peripheral feature.
+
 ## One Class, One File
 
 Each class (or, in the case of Rust, each struct) should go in its own file.
