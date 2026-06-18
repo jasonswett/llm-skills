@@ -12,6 +12,8 @@ prompting. The user can pass "fsd" to invoke full self-driving mode.
 Note: all the following steps should be followed, strictly and literally, even
 for trivial-seeming changes.
 
+This skill applies just as much to test code as to application code.
+
 1. Unless otherwise specified, set your scope to the diff between the current
    branch and master/main. Important note: don't neglect to review test code,
    which is just as important as application code if not more so.
