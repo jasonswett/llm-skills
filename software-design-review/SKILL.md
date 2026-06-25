@@ -10,7 +10,7 @@ self-driving" mode where you just apply all fixes to all violations without
 prompting. The user can pass "fsd" to invoke full self-driving mode.
 
 Note: all the following steps should be followed, strictly and literally, even
-for trivial-seeming changes.
+for trivial-seeming changes, even for tiny changes.
 
 This skill applies just as much to test code as to application code.
 
