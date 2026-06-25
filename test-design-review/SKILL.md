@@ -600,6 +600,52 @@ context "when filtered by github account" do
 end
 ```
 
+## Favor Concrete Examples Over Abstractions
+
+Bad:
+```ruby
+describe "#matches?" do
+  context "when the root job run's status is one of the filter's statuses" do
+    let!(:failed_job_run) { create(:job_run) }
+    let!(:failed_task) { create(:task, :failed, job_run: failed_job_run) }
+
+    it "is a match" do
+      job_run_tree = JobRunTree.new(failed_job_run)
+      filter_criteria = JobRunListFilterCriteria.new(branch_name: nil, statuses: ["Failed"])
+
+      expect(job_run_tree.matches?(filter_criteria)).to eq(true)
+    end
+  end
+end
+```
+
+Good:
+```ruby
+describe "#matches?" do
+  context "when filtering for failed job runs" do
+    let!(:filter_criteria) { JobRunListFilterCriteria.new(branch_name: nil, statuses: ["Failed"]) }
+
+    context "and the root job run failed" do
+      let!(:root_job_run) { create(:job_run) }
+      let!(:failed_task) { create(:task, :failed, job_run: root_job_run) }
+
+      it "matches the tree" do
+        expect(JobRunTree.new(root_job_run).matches?(filter_criteria)).to eq(true)
+      end
+    end
+
+    context "and the root job run passed" do
+      let!(:root_job_run) { create(:job_run) }
+      let!(:passed_task) { create(:task, :passed, job_run: root_job_run) }
+
+      it "does not match the tree" do
+        expect(JobRunTree.new(root_job_run).matches?(filter_criteria)).to eq(false)
+      end
+    end
+  end
+end
+```
+
 ## No Speculative Coding
 
 ```ruby
