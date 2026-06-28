@@ -481,3 +481,18 @@ submit() {
 ## No Speculative Generalizations
 
 Don't create speculative generalizations.
+
+## Avoid the Law of Demeter
+
+The so-called Law of Demeter adds a layer of speculative indirection without
+providing any real benefit. Unless there is a clearly demonstrated NEED, the
+Law of Demeter should be avoided.
+
+For example, this is dumb:
+```ruby
+def file_path
+  file.path
+end
+```
+
+Better to just call `file.path` wherever it's needed.
