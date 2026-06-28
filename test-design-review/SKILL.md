@@ -646,6 +646,32 @@ describe "#matches?" do
 end
 ```
 
+## Tests Should Not Be Programs
+
+Tests should be flat and static. The following is an example of how a test
+should NOT be.
+
+```ruby
+it 'treats a timed-out job run as finished' do
+  timed_out_response = double(body: '{"status": "Timed Out"}')
+  client = double
+  poll_count = 0
+  allow(client).to receive(:get) do
+    poll_count += 1
+    raise 'polled again after a terminal status' if poll_count > 1
+
+    timed_out_response
+  end
+
+  job_run = SaturnCI::JobRun.new(id: 'abc123', client: client)
+  allow(job_run).to receive(:sleep)
+
+  job_run.wait_for_completion
+
+  expect(job_run.status).to eq('Timed Out')
+end
+```
+
 ## No Speculative Coding
 
 ```ruby
