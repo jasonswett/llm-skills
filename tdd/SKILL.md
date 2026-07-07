@@ -23,9 +23,14 @@ At a finer grain:
 
 1. Write a list of the specifications within scope of the current TDD session
 2. Encode one item in the list as an automated test
-3. Change the code *just barely enough* to *make the current test failure go away*. Avoid "speculative coding" - if we write more code than necessary to make the current test failure go away, we risk having code never exercised by any test
-4. Optionally refactor, but not before committing the behavior change. Never mix behavior changes with refactoring
-5. Until the list is empty, go back to #2
+3. Run the test and watch it fail. Confirm it fails because the behavior doesn't exist yet, not because of a typo or setup error. If it passes before you've written any application code, the test is wrong
+4. Change the code *just barely enough* to *make the current test failure go away*. Avoid "speculative coding" - if we write more code than necessary to make the current test failure go away, we risk having code never exercised by any test
+5. Optionally refactor, but not before committing the behavior change. Never mix behavior changes with refactoring
+6. Until the list is empty, go back to #2
+
+Work the list one item at a time through the approval gates in the Workflow
+section below. Never batch multiple tests or multiple behavior changes into a
+single approval.
 
 This follows Kent Beck's [Canon TDD](https://tidyfirst.substack.com/p/canon-tdd).
 
@@ -94,19 +99,30 @@ we're about to add slot tidily into the conceptual framework of the area of the
 code where we'll be adding it? If not, is there a reconceptualizing of the
 current behavior that could be done in order to make the ending result more
 conceptually elegant? If such a reconceptualizing is called for, suggest it to
-the user. If the user approves, abandon the current change, get to a clean
-working state, and, on a new branch, perform a refactoring. "Clean the kitchen
-before you make dinner." Then pause and consult the user and we'll begin again.
+the user. If the user approves, set the current change aside with `git stash`
+(never discard uncommitted work), confirm the working tree is clean, and, on a
+new branch, perform the refactoring. "Clean the kitchen before you make
+dinner." Then pause and consult the user and we'll begin again.
 
 ### Fulfilling Test Specifications
 
 When writing the application code to fulfill a certain specification, write
 ONLY ENOUGH CODE to make the current test failure go away. Never use "defensive
 coding". Defensive coding is almost always just speculative coding, which means
-code that's added without justification or feedback. Once you've written the
-test, invoke a separate subagent with the /test-design-review command to
-scrutinize your test code. Then invoke another subagent with the
-/software-design-review command to scrutinize your application code.
+code that's added without justification or feedback. If you believe a guard is
+genuinely needed (for example, validating input at a trust boundary), that's a
+missing specification: propose a test for it rather than adding unspecified
+code.
+
+Once you've written the test, invoke a separate subagent with the
+/test-design-review command to scrutinize your test code. Then invoke another
+subagent with the /software-design-review command to scrutinize your
+application code. Run both reviews before presenting the code for approval. If
+your environment can't expand slash commands inside a subagent, have the
+subagent read the corresponding skill file
+([test-design-review/SKILL.md](../test-design-review/SKILL.md),
+[software-design-review/SKILL.md](../software-design-review/SKILL.md)) and
+apply it.
 
 ### Don't Be Sloppy
 
@@ -129,3 +145,6 @@ This is stupid and bad:
 > image name.
 
 Don't abandon tests immediately upon encountering the slightest difficulty.
+When the tests won't run, the task becomes getting them to run: diagnose the
+environment problem, fix it if the fix is small, and ask the user if it isn't.
+Never present code as done when its tests haven't run.
