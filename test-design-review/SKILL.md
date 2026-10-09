@@ -672,6 +672,33 @@ it 'treats a timed-out job run as finished' do
 end
 ```
 
+Another bad example:
+
+```ruby
+describe Transition do
+  describe '#run' do
+    context "when the parent job specifies a child job of 'deploy'" do
+      it 'makes a SaturnCI API call to invoke the deploy job' do
+        stub_const('SaturnCI::JobRun', double('JobRun'))
+        parent_job_run = double('parent_job_run', job_name: 'production_image_build')
+        transition = Transition.new
+        allow(transition).to receive(:require) do
+          stub_const('ProductionImageBuildTransition', Class.new do
+            def after(_job_run)
+              [{ job_name: 'deploy' }]
+            end
+          end)
+        end
+
+        expect(SaturnCI::JobRun).to receive(:create).with(hash_including(job_name: 'deploy'))
+
+        transition.run(parent_job_run)
+      end
+    end
+  end
+end
+```
+
 ## No Speculative Coding
 
 ```ruby
