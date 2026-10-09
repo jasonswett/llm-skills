@@ -37,6 +37,24 @@ This skill applies just as much to test code as to application code.
 
 Bad:
 ```ruby
+def prepare_dockerfile
+  original = File.read(dockerfile_path)
+  File.write(dockerfile_path, DockerfileWithBuildArgs.new(original, task.env_vars.keys).to_s)
+end
+```
+
+This is not "an original".
+
+Good:
+```ruby
+def prepare_dockerfile
+  dockerfile_content = File.read(dockerfile_path)
+  File.write(dockerfile_path, DockerfileWithBuildArgs.new(dockerfile_content, task.env_vars.keys).to_s)
+end
+```
+
+Bad:
+```ruby
 def self.generate(github_installation_id)
   fail "Installation ID is missing" if github_installation_id.blank?
 
@@ -496,3 +514,34 @@ end
 ```
 
 Better to just call `file.path` wherever it's needed.
+
+## Don't Compromise on Names Just to Avoid Naming Collisions
+
+This is stupid:
+
+```ruby
+quota_status = resource_quota_status
+```
+
+## Demand that Methods Provide Helpful Abstraction, Not Pointless Indirection
+
+This is stupid:
+
+```ruby
+quota_status = resource_quota_status
+```
+
+"What's quota status? It's resource quota status." This doesn't tell us
+anything we didn't already know. It just forces us to go look somewhere else
+for the real answer.
+
+## Use Comments Only as a Last Resort
+
+Comments are a sign of a failure to make the code clear enough. Add them only
+as an absolute last resort. Delete existing comments aggressively.
+
+## Keep Models Meaningful
+
+`VendorImages`, for example, is probably a poor model. A good heuristic is: can
+I prefix the model name with "a"? Is there any such thing as "a vendor images"?
+No.
