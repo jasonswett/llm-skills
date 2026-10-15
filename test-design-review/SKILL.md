@@ -133,6 +133,50 @@ expect(response.body).not_to include("deleted_item")
 
 If the response wasn't successful, the body assertion tells you something went wrong. The `be_successful` check adds nothing.
 
+## Keep Test Setup Focused on the Essential
+
+Bad:
+```ruby
+let!(:task_resource_sample) do
+  task.task_resource_samples.create!(
+    sampled_at: Time.zone.parse("2025-01-01 12:00:05"),
+    cpu_usage_millicores: 1500,
+    memory_usage_bytes: 2_147_483_648
+  )
+end
+
+before { click_on "Instrumentation" }
+
+it "shows the task's resource samples" do
+  expect(page).to have_content("1500")
+end
+```
+
+The only thing that matters for this test is the `cpu_usage_millicores: 1500`
+value. The values for `sampled_at` and `memory_usage_bytes` are arbitrary.
+Their presence is confusing. They raise the question: do these values _have_ to
+be what they are or could they have been anything? Are they there for a purpose
+that's relevant to the test, or are they just there because they have to have
+_some_ value? Better in these cases to use a factory so that the essential
+value and only the essential value can be specified.
+
+Good:
+```ruby
+let!(:task_resource_sample) do
+  create(
+    :task_resource_sample,
+    task: task,
+    cpu_usage_millicores: 1500
+  )
+end
+
+before { click_on "Instrumentation" }
+
+it "shows the task's resource samples" do
+  expect(page).to have_content("1500")
+end
+```
+
 ## Don't Mix Levels of Abstraction
 
 Bad:

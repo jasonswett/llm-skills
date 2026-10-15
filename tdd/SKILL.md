@@ -129,3 +129,7 @@ This is stupid and bad:
 > image name.
 
 Don't abandon tests immediately upon encountering the slightest difficulty.
+
+### Miscellaneous
+
+- Don't ADD tests when we REMOVE features.
