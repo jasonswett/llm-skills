@@ -535,6 +535,12 @@ quota_status = resource_quota_status
 anything we didn't already know. It just forces us to go look somewhere else
 for the real answer.
 
+This is also stupid:
+
+```ruby
+response = response_from_server(method_class, path, params)
+```
+
 ## Use Comments Only as a Last Resort
 
 Comments are a sign of a failure to make the code clear enough. Add them only

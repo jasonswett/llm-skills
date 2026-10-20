@@ -752,6 +752,36 @@ expect(page).to have_content("Passed", wait: 3)
 Is the "wait" really needed, or was it just cargo culted? Scrutinize such
 choices.
 
+## Don't Conflate Specifications
+
+Bad:
+```ruby
+describe '#capture' do
+  it 'returns stderr along with stdout' do
+    output = TaskAgent::Shell.new.capture("printf 'to stdout\\n'; printf 'to stderr\\n' >&2")
+
+    expect(output).to eq("to stdout\nto stderr\n")
+  end
+end
+```
+
+Good:
+```ruby
+describe '#capture' do
+  it 'returns stdout' do
+    output = TaskAgent::Shell.new.capture("printf 'to stdout\\n'")
+
+    expect(output).to eq("to stdout\n")
+  end
+
+  it 'returns stderr' do
+    output = TaskAgent::Shell.new.capture("printf 'to stderr\\n' >&2")
+
+    expect(output).to eq("to stderr\n")
+  end
+end
+```
+
 ## Miscellaneous
 
 Never use `instance_variable_set`. In cases where it seems like
